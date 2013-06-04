@@ -10,7 +10,7 @@ bool Game::isRunning() const {
 }
 
 void Game::addCell(int x, int y) {
-	board.addCell(Cell(x, y));
+	board.cells.insert(Cell(x, y));
 }
 
 void Game::handleEvents() {
@@ -46,7 +46,7 @@ void Game::render() {
 
 	window.draw(background);
 
-	for(const auto cell : board.getCells()) {
+	for(const auto cell : board.cells) {
 		drawCell(cell);
 	}
 
@@ -90,4 +90,10 @@ void Game::drawCell(const Cell& cell) {
 	box.setPosition(pos);
 	box.setFillColor(sf::Color::Black);
 	window.draw(box);
+}
+
+void Game::setBoardSize(int width, int height) {
+	board.width = width;
+	board.height = height;
+	cellsize = sf::Vector2f(videomode.height / height, videomode.width / width);
 }

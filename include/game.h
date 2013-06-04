@@ -13,6 +13,9 @@ namespace Conway {
 
 		bool isRunning() const;
 
+		int getBoardHeight() const { return board.height; }
+		int getBoardWidth() const { return board.width; }
+
 		void start();
 		void stop();
 		void handleEvents();
@@ -21,6 +24,7 @@ namespace Conway {
 		void setTitle(std::string title);
 
 		void addCell(int x, int y);
+		void setBoardSize(int width, int height);
 
 	private:
 		void drawCell(const Cell& cell);

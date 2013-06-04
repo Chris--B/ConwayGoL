@@ -72,7 +72,3 @@ std::array<Cell, 8> Board::getNeighbors(const Cell& cell) const {
 	}
 	return neighbors;
 }
-
-void Board::addCell(const Cell& cell) {
-	cells.insert(cell);
-}

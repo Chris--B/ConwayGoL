@@ -17,11 +17,12 @@ set(SFML_LIBS_RELEASE
 
 add_definitions(-DSFML_STATIC)
 
-# Visual Studio ignores this, but anything mimicing GCC's interface will need it, or '-std=c++0x'
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# Visual Studio ignores this, but anything mimicing GCC's interface will need it, or possibly '-std=c++0x'
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
 
 set(src "source")
 set(sources
+	${src}/board.cpp
 	${src}/cell.cpp
 	${src}/game.cpp
 	${src}/main.cpp
@@ -29,6 +30,7 @@ set(sources
 
 set(inc "include")
 set(includes
+	${inc}/board.h
 	${inc}/cell.h
 	${inc}/game.h
 	)

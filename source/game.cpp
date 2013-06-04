@@ -1,36 +1,16 @@
 #include "game.h"
-#include "cell.h"
 
 #include <cstdio>
 #include <cstdarg>
 
 using namespace Conway;
 
-int Game::countLivingNeighbors(const Cell& cell) const {
-	auto living = 0;
-	auto neighbors = cell.getNeighbors();
-	for(auto c : neighbors) {
-		if (isCellAlive(c)) {
-			++living;
-		}
-	}
-	return living;
-}
-
-bool Game::isCellAlive(const Cell& cell) const {
-	return cells.find(cell) != cells.end();
-}
-
 bool Game::isRunning() const {
 	return window.isOpen();
 }
 
-void Game::addCell(const Cell& cell) {
-	cells.insert(cell);
-	log("Inserted cell @ %d, %d.", cell.x, cell.y);
-}
 void Game::addCell(int x, int y) {
-	addCell(Cell(x, y));
+	board.addCell(Cell(x, y));
 }
 
 void Game::handleEvents() {
@@ -47,8 +27,13 @@ void Game::handleEvents() {
 				break;
 			case sf::Keyboard::Space:
 				paused = !paused;
+				break;
+			case sf::Keyboard::Right:
+				if (paused) {
+					board.advanceBoard();
+				}
+				break;
 			}
-			break;
 		}
 	}
 }
@@ -58,16 +43,19 @@ void Game::render() {
 	window.clear();
 	auto background = sf::RectangleShape(sf::Vector2f(window.getSize()));
 	background.setFillColor(sf::Color::White);
-	
+
 	window.draw(background);
-	for(auto cell : cells) {
+
+	for(const auto cell : board.getCells()) {
 		drawCell(cell);
 	}
+
 	window.display();
 }
 
 void Game::setResolution(unsigned height, unsigned width) {
 	videomode = sf::VideoMode(height, width);
+	cellsize = sf::Vector2f(height / board.getHeight(), width / board.getWidth());
 }
 void Game::setTitle(std::string title) {
 	windowtitle = title;
@@ -76,7 +64,7 @@ void Game::setTitle(std::string title) {
 void Game::start() {
 
 	sf::Clock clock;
-	const sf::Time delay = sf::seconds(1.0 / 3);
+	const sf::Time delay = sf::seconds(1.0f / 15); // 15 generations per second
 
 	window.create(videomode, windowtitle);
 
@@ -87,7 +75,7 @@ void Game::start() {
 			render();
 		}
 		if (!paused) {
-			int x = advanceBoard();
+			board.advanceBoard();
 		}
 	}
 }
@@ -96,42 +84,10 @@ void Game::stop() {
 	window.close();
 }
 
-int Game::advanceBoard(unsigned generations) {
-	int living_count = 0;
-	while (generations--) {
-		std::unordered_set<Cell> next_gen;
-
-		for(auto cell : cells) {
-			log("Checking neighbors of existing cell %d, %d", cell.x, cell.y);
-			for(auto neighbor : cell.getNeighbors()) {
-				log("Found cell %d, %d", neighbor.x, neighbor.y);
-				auto living_neighbors = countLivingNeighbors(neighbor);
-				if (living_neighbors == 3 || (living_neighbors == 2 && isCellAlive(neighbor))) {
-					next_gen.insert(neighbor);
-					++living_count;
-				}
-			}
-		}
-		cells = next_gen;
-	}
-	return living_count;
-}
-
-void Game::log(std::string format, ...) const {
-#ifdef NDEBUG
-	// do nothing
-#else
-	va_list va;
-	va_start(va, format);
-	vfprintf(stdout, format.c_str(), va);
-	printf("\n");
-	va_end(va);
-#endif
-}
-
 void Game::drawCell(const Cell& cell) {
-	sf::RectangleShape square(sf::Vector2f(gridsize, gridsize));
-	square.setPosition(cell.x * gridsize, cell.y * gridsize);
-	square.setFillColor(sf::Color::Black);
-	window.draw(square);
+	auto box = sf::RectangleShape(cellsize);
+	auto pos = sf::Vector2f(cell.x * cellsize.x, cell.y * cellsize.y);
+	box.setPosition(pos);
+	box.setFillColor(sf::Color::Black);
+	window.draw(box);
 }

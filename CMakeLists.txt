@@ -38,6 +38,7 @@ include_directories(${inc})
 
 add_executable(
 	Conway
+	WIN32 MACOSX_BUNDLE
 	${sources}
 	${includes}
 )

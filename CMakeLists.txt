@@ -2,47 +2,62 @@ cmake_minimum_required(VERSION 2.8.3)
 
 project(ConwayGoL)
 
-set(SFML_LIBS_DEBUG
-	debug sfml-main-d.lib
-	debug sfml-graphics-s-d.lib
-	debug sfml-window-s-d.lib
-	debug sfml-system-s-d.lib
-)
-set(SFML_LIBS_RELEASE
-	optimized sfml-main.lib
-	optimized sfml-graphics-s.lib
-	optimized sfml-window-s.lib
-	optimized sfml-system-s.lib
-)
+set(GCC_CLANG_FLAGS "-std=c++11 -Wall -Wextra -Wno-switch -Wno-missing-braces")
 
-add_definitions(-DSFML_STATIC)
+if(WIN32)
+	add_definitions(-DSFML_STATIC)
 
-# Visual Studio ignores this, but anything mimicing GCC's interface will need it, or possibly '-std=c++0x'
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
-
-set(src "source")
-set(sources
-	${src}/board.cpp
-	${src}/cell.cpp
-	${src}/game.cpp
-	${src}/main.cpp
-)
-
-set(inc "include")
-set(includes
-	${inc}/board.h
-	${inc}/cell.h
-	${inc}/game.h
+	set(SFML_LIBS_DEBUG
+		debug sfml-main-d.lib
+		debug sfml-graphics-s-d.lib
+		debug sfml-window-s-d.lib
+		debug sfml-system-s-d.lib
 	)
-include_directories(${inc})
+	set(SFML_LIBS_RELEASE
+		optimized sfml-main.lib
+		optimized sfml-graphics-s.lib
+		optimized sfml-window-s.lib
+		optimized sfml-system-s.lib
+	)
+	set(SFML_LIBS ${SFML_LIBS_DEBUG} ${SFML_LIBS_RELEASE})
+
+	if(MINGW)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS}")
+	endif()
+
+elseif(APPLE)
+	# Apple clang gets pissy about c++11 stuff if we don't use libc++ (why?)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS} -stdlib=libc++")
+
+	find_library(SFML_GRAPHICS sfml-graphics)
+	find_library(SFML_SYSTEM sfml-system)
+	find_library(SFML_WINDOW sfml-window)
+	set(SFML_LIBS ${SFML_GRAPHICS} ${SFML_SYSTEM} ${SFML_WINDOW})
+else()
+	message("wtf is this?")
+endif()
+
+
+set(srcs
+	source/board.cpp
+	source/cell.cpp
+	source/game.cpp
+	source/main.cpp
+)
+
+set(incs
+	include/board.h
+	include/cell.h
+	include/game.h
+	)
+include_directories(include)
 
 add_executable(
 	Conway
 	WIN32 MACOSX_BUNDLE
-	${sources}
-	${includes}
+	${srcs}
+	${incs}
 )
 target_link_libraries(
 	Conway
-	${SFML_LIBS_DEBUG}
-	${SFML_LIBS_RELEASE})
+	${SFML_LIBS})

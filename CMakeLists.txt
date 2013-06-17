@@ -25,18 +25,20 @@ if(WIN32)
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS}")
 	endif()
 
-elseif(APPLE)
-	# Apple clang gets pissy about c++11 stuff if we don't use libc++ (why?)
+else()
+	# libc++ has better c++11 support right now
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS} -stdlib=libc++")
+
+	if(APPLE)
+		# Xcode ignores that last line, so we need to hardcode it.
+		set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+	endif()
 
 	find_library(SFML_GRAPHICS sfml-graphics)
 	find_library(SFML_SYSTEM sfml-system)
 	find_library(SFML_WINDOW sfml-window)
 	set(SFML_LIBS ${SFML_GRAPHICS} ${SFML_SYSTEM} ${SFML_WINDOW})
-else()
-	message("wtf is this?")
 endif()
-
 
 set(srcs
 	source/board.cpp

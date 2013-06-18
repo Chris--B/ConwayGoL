@@ -20,17 +20,11 @@ if(WIN32)
 		optimized sfml-system-s.lib
 	)
 	set(SFML_LIBS ${SFML_LIBS_DEBUG} ${SFML_LIBS_RELEASE})
-
-	if(MINGW)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS}")
-	endif()
-
 else()
-	# libc++ has better c++11 support right now
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS} -stdlib=libc++")
-
 	if(APPLE)
-		# Xcode ignores that last line, so we need to hardcode it.
+		# OS X needs this (why?), but GCC can't handle it.
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+		# Xcode (but not the makefiles) ignores that last line, so we need to hardcode it.
 		set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 	endif()
 
@@ -38,6 +32,13 @@ else()
 	find_library(SFML_SYSTEM sfml-system)
 	find_library(SFML_WINDOW sfml-window)
 	set(SFML_LIBS ${SFML_GRAPHICS} ${SFML_SYSTEM} ${SFML_WINDOW})
+endif()
+
+if(MSVC)
+	# Nothing, I just can't find a `not` command
+else()
+	# If you're not using MSVC, you're using Clang or GCC... or Intel. Let's ignore Intel for now.
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS}")
 endif()
 
 set(srcs

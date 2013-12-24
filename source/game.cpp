@@ -38,12 +38,20 @@ void Game::handleEvents() {
 }
 
 void Game::loadSettings(const std::string& filename) {
-	INIReader reader(filename);
-	while (reader.ParseError() < 0) {
-		std::ofstream fi(filename);	
-		reader = INIReader(filename);
+    std::ifstream fi(filename);
+	if (!fi) {
+        // The file doesn't exist, we better try to create it.
+        std::ofstream inifile(filename);
+        if (inifile) {
+            inifile << ";Auto-generated empty file.\n";
+            inifile.close();
+        } else {
+            // Could not open it. Bad things are about to happen....
+            assert("Could not open settings file, bad things happened instead.");
+        }
 	}
-
+	INIReader reader(filename);
+    
 	int width, height;
 
 	height = reader.GetInteger("window", "height", 800);

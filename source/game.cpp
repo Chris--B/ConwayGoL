@@ -75,7 +75,7 @@ void Game::loadSettings(const std::string& filename) {
 	// TODO: How should too large of numbers be handled?
 
 	// If a color isn't specificed, assume 0
-	// UNLESS they're all 0, then we want it to be white
+	// UNLESS none of them are given, then we want it to be white
 	red = reader.GetInteger("background color", "red", -1);
 	green = reader.GetInteger("background color", "green", -1);
 	blue = reader.GetInteger("background color", "blue", -1);

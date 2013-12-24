@@ -50,6 +50,7 @@ void Game::loadSettings(const std::string& filename) {
             assert("Could not open settings file, bad things happened instead.");
         }
 	}
+    
 	INIReader reader(filename);
     
 	int width, height;

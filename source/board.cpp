@@ -5,8 +5,10 @@
 
 using namespace Conway;
 
-bool Board::isAlive(const Cell& cell) const {
-	return cells.find(cell) != cells.end();
+void Board::forEachCell(std::function<void(const Cell&)> func) const {
+	for(const Cell& cell : cells) {
+		func(cell);
+	}
 }
 
 int Board::advanceBoard(unsigned generations) {

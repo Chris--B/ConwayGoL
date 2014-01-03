@@ -5,14 +5,6 @@
 
 using namespace Conway;
 
-bool Game::isRunning() const {
-	return window.isOpen();
-}
-
-void Game::addCell(int x, int y) {
-	board.cells.insert(Cell(x, y));
-}
-
 void Game::handleEvents() {
 	sf::Event event;
 	while (window.pollEvent(event)) {
@@ -22,12 +14,15 @@ void Game::handleEvents() {
 			break;
 		case sf::Event::KeyPressed:
 			switch(event.key.code) {
+				// Q quits
 			case sf::Keyboard::Q:
 				stop();
 				break;
 			case sf::Keyboard::Space:
+				// Space toggles pause
 				paused = !paused;
 				break;
+				// Right arrow key advances one generation at a time when paused
 			case sf::Keyboard::Right:
 				if (paused) {
 					board.advanceBoard();
@@ -39,32 +34,28 @@ void Game::handleEvents() {
 }
 
 void Game::render() {
-
 	window.clear();
-	auto background = sf::RectangleShape(sf::Vector2f(window.getSize()));
-	background.setFillColor(sf::Color::White);
 
+	auto background = sf::RectangleShape(sf::Vector2f(window.getSize()));
+	background.setFillColor(backgroundColor);
 	window.draw(background);
 
-	for(const auto cell : board.cells) {
+	board.forEachCell( [this](Cell cell){
 		drawCell(cell);
-	}
+	});
 
 	window.display();
 }
 
 void Game::setResolution(unsigned height, unsigned width) {
 	videomode = sf::VideoMode(height, width);
-	cellsize = sf::Vector2f(height / board.getHeight(), width / board.getWidth());
-}
-void Game::setTitle(std::string title) {
-	windowtitle = title;
+	cellsize = sf::Vector2f(1.0f * height / board.getHeight(), 1.0f * width / board.getWidth());
 }
 
 void Game::start() {
 
 	sf::Clock clock;
-	const sf::Time delay = sf::seconds(1.0f / 15); // 15 generations per second
+	const sf::Time delay = sf::seconds(1.0f / generations_per_sec); 
 
 	window.create(videomode, windowtitle);
 
@@ -80,20 +71,18 @@ void Game::start() {
 	}
 }
 
-void Game::stop() {
-	window.close();
-}
-
 void Game::drawCell(const Cell& cell) {
 	auto box = sf::RectangleShape(cellsize);
 	auto pos = sf::Vector2f(cell.x * cellsize.x, cell.y * cellsize.y);
 	box.setPosition(pos);
-	box.setFillColor(sf::Color::Black);
+	box.setFillColor(cellColor);
 	window.draw(box);
 }
 
 void Game::setBoardSize(int width, int height) {
-	board.width = width;
-	board.height = height;
-	cellsize = sf::Vector2f(videomode.height / height, videomode.width / width);
+	board.setWidth(width);
+	board.setHeight(height);
+	cellsize = sf::Vector2f(1.0f * videomode.height / height, 1.0f * videomode.width / width);
+	
+
 }

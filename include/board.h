@@ -8,21 +8,17 @@
 namespace Conway {
 class Board {
 public:
-	static const int DEFAULT_WIDTH = 25;
-	static const int DEFAULT_HEIGHT = 25;
-
-	Board()
-		: width(DEFAULT_WIDTH), height(DEFAULT_HEIGHT) {}
+	Board() : width(0), height(0) {}
 	Board(size_t width, size_t height)
 		: width(width), height(height) {}
 
 	bool isAlive(const Cell& cell) const { return cells.find(cell) != cells.end(); }
 
-	int getWidth() const { return width; }
 	int getHeight() const { return height; }
+	int getWidth() const { return width; }
 
-	void setWidth(int width) { this->width = width; }
 	void setHeight(int height) { this->height = height; }
+	void setWidth(int width) { this->width = width; }
 	void addCell(const Cell& cell) { this->cells.insert(cell); }
 	
 	/* Call func() on each cell in cells, in some order
@@ -35,11 +31,12 @@ public:
 	void forEachCell(const std::function<void(const Cell&)>& func) const;
 
 	int advanceBoard(unsigned generations = 1);
+
+private:
 	int countLivingNeighbors(const Cell& cell) const;
 
 	std::array<Cell, 8> getNeighbors(const Cell& cell) const;
-	
-private:
+
 	int width;
 	int height;
 
@@ -47,4 +44,3 @@ private:
 };
 
 } // namespace Conway
-

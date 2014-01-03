@@ -1,4 +1,5 @@
 #include "game.h"
+#include "INIReader.h"
 
 #include <cstdio>
 #include <cstdarg>
@@ -34,36 +35,56 @@ void Game::handleEvents() {
 	}
 }
 
+void Game::loadSettings(const std::string& filename) {
+	INIReader reader(filename);
+	assert(reader.ParseError() >= 0);
+		//can't load the file!
+
+	int width, height;
+
+	height = reader.GetInteger("window", "height", 800);
+	width = reader.GetInteger("window", "width", 800);
+	setResolution(height, width);
+
+	height = reader.GetInteger("simulation", "height", 25);
+	width = reader.GetInteger("simulation", "width", 25);
+	setBoardSize(height, width);
+
+	speed = reader.GetInteger("simulation", "speed", 15);
+
+	setWindowTitle(reader.Get("window", "title", "Conway's Game of Life"));
+
+	sf::Uint8 red, green, blue;
+
+	// Colors default to black
+	// TODO: How should too large of numbers be handled? Right now it just wraps around. e.g. 260 is read as 260 % 255 = 5
+	red = reader.GetInteger("background color", "red", 0) & 0xff;
+	green = reader.GetInteger("background color", "green", 0) & 0xff;
+	blue = reader.GetInteger("background color", "blue", 0) & 0xff;
+	color_background = sf::Color(red, green, blue);
+
+	red = reader.GetInteger("cell color", "red", 0) & 0xff;
+	green = reader.GetInteger("cell color", "green", 0) & 0xff;
+	blue = reader.GetInteger("cell color", "blue", 0) & 0xff;
+	color_cell = sf::Color(red, green, blue);
+}
+
 void Game::render() {
 	window.clear();
 
 	auto background = sf::RectangleShape(sf::Vector2f(window.getSize()));
-	background.setFillColor(backgroundColor);
+	background.setFillColor(color_background);
 	window.draw(background);
 
 	board.forEachCell( [this](Cell cell){
-		drawCell(cell);
+		auto box = sf::RectangleShape(cell_size);
+		auto pos = sf::Vector2f(cell.x * cell_size.x, cell.y * cell_size.y);
+		box.setPosition(pos);
+		box.setFillColor(color_cell);
+		window.draw(box);
 	});
 
 	window.display();
-}
-
-void Game::setResolution(unsigned height, unsigned width) {
-	videomode = sf::VideoMode(height, width);
-	cellsize = sf::Vector2f(1.0f * height / board.getHeight(), 1.0f * width / board.getWidth());
-}
-
-void Game::loadSettings(const std::string& filename) {
-	auto cfg = GameSettings::fromFile(filename);
-	
-	paused = cfg.start_paused;
-	speed = cfg.speed;
-	backgroundColor = cfg.background_color;
-	cellColor = cfg.cell_color;
-
-	setTitle(cfg.window_title);
-	setResolution(cfg.resolution_height, cfg.resolution_width);
-	setBoardSize(cfg.grid_width, cfg.grid_height);
 }
 
 void Game::start() {
@@ -71,7 +92,7 @@ void Game::start() {
 	sf::Clock clock;
 	const sf::Time delay = sf::seconds(1.0f / speed); 
 
-	window.create(videomode, windowtitle);
+	window.create(video_mode, window_title);
 
 	while (isRunning()) {
 		loadSettings("conway.ini");
@@ -86,18 +107,13 @@ void Game::start() {
 	}
 }
 
-void Game::drawCell(const Cell& cell) {
-	auto box = sf::RectangleShape(cellsize);
-	auto pos = sf::Vector2f(cell.x * cellsize.x, cell.y * cellsize.y);
-	box.setPosition(pos);
-	box.setFillColor(cellColor);
-	window.draw(box);
+void Game::setBoardSize(int height, int width) {
+	board.setHeight(height);
+	board.setWidth(width);
+	cell_size = sf::Vector2f(1.0f * video_mode.height / height, 1.0f * video_mode.width / width);
 }
 
-void Game::setBoardSize(int width, int height) {
-	board.setWidth(width);
-	board.setHeight(height);
-	cellsize = sf::Vector2f(1.0f * videomode.height / height, 1.0f * videomode.width / width);
-	
-
+void Game::setResolution(unsigned height, unsigned width) {
+	video_mode = sf::VideoMode(height, width);
+	cell_size = sf::Vector2f(1.0f * height / board.getHeight(), 1.0f * width / board.getWidth());
 }

@@ -41,28 +41,29 @@ else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS}")
 endif()
 
-set(srcs
-	source/board.cpp
-	source/cell.cpp
-	source/game.cpp
-	source/gamesettings.cpp
-	source/main.cpp
-)
-
-set(incs
-	include/board.h
-	include/cell.h
-	include/game.h
-	include/gamesettings.h
-	)
 include_directories(include)
+include_directories(INIReader)
 
 add_executable(
 	Conway
 	WIN32 MACOSX_BUNDLE
-	${srcs}
-	${incs}
+	source/board.cpp
+	source/cell.cpp
+	source/game.cpp
+	source/main.cpp
+	include/board.h
+	include/cell.h
+	include/game.h
+)
+
+add_library(
+	INIReader STATIC
+	INIReader/INIReader.cpp
+	INIReader/INIReader.h
+	INIReader/ini.c
+	INIReader/ini.h
 )
 target_link_libraries(
 	Conway
+	INIReader
 	${SFML_LIBS})

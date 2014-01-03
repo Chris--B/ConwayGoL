@@ -1,7 +1,6 @@
 #pragma once
 
 #include "board.h"
-#include "GameSettings.h"
 
 #include <SFML/Graphics.hpp>
 

@@ -5,6 +5,8 @@
 #include <cstdarg>
 #include <cassert>
 
+#include <fstream>
+
 using namespace Conway;
 
 void Game::handleEvents() {
@@ -37,8 +39,10 @@ void Game::handleEvents() {
 
 void Game::loadSettings(const std::string& filename) {
 	INIReader reader(filename);
-	assert(reader.ParseError() >= 0);
-		//can't load the file!
+	while (reader.ParseError() < 0) {
+		std::ofstream fi(filename);	
+		reader = INIReader(filename);
+	}
 
 	int width, height;
 
@@ -54,18 +58,30 @@ void Game::loadSettings(const std::string& filename) {
 
 	setWindowTitle(reader.Get("window", "title", "Conway's Game of Life"));
 
-	sf::Uint8 red, green, blue;
+	// sf::Color uses 8bit ints, we'll use the extra values for error detection of sorts
+	// This is messier than I'd like, maybe there's a work around somewhere?
+	int red, green, blue;
 
 	// Colors default to black
-	// TODO: How should too large of numbers be handled? Right now it just wraps around. e.g. 260 is read as 260 % 255 = 5
-	red = reader.GetInteger("background color", "red", 0) & 0xff;
-	green = reader.GetInteger("background color", "green", 0) & 0xff;
-	blue = reader.GetInteger("background color", "blue", 0) & 0xff;
+	// TODO: How should too large of numbers be handled?
+
+	// If a color isn't specificed, assume 0
+	// UNLESS they're all 0, then we want it to be white
+	red = reader.GetInteger("background color", "red", -1);
+	green = reader.GetInteger("background color", "green", -1);
+	blue = reader.GetInteger("background color", "blue", -1);
+	if (red == -1 && green == -1 && blue == -1) {
+		red = green = blue = 255;
+	} else {
+		if (red == -1)	{ red = 0; }
+		if (green == -1){ green = 0; }
+		if (blue == -1)	{ blue = 0; }
+	}
 	color_background = sf::Color(red, green, blue);
 
-	red = reader.GetInteger("cell color", "red", 0) & 0xff;
-	green = reader.GetInteger("cell color", "green", 0) & 0xff;
-	blue = reader.GetInteger("cell color", "blue", 0) & 0xff;
+	red = reader.GetInteger("cell color", "red", 0);
+	green = reader.GetInteger("cell color", "green", 0);
+	blue = reader.GetInteger("cell color", "blue", 0);
 	color_cell = sf::Color(red, green, blue);
 }
 

@@ -32,7 +32,7 @@ public:
 			}
 		but preserves encapsulation, since the caller can't access board.cells otherwise.
 	*/
-	void forEachCell(std::function<void(const Cell&)> func) const;
+	void forEachCell(const std::function<void(const Cell&)>& func) const;
 
 	int advanceBoard(unsigned generations = 1);
 	int countLivingNeighbors(const Cell& cell) const;

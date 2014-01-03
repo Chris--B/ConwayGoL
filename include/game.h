@@ -21,7 +21,7 @@ namespace Conway {
 		void handleEvents();
 		void render();
 		void setResolution(unsigned height, unsigned width);
-		void setTitle(std::string title) { windowtitle = title; }
+		void setTitle(const std::string& title) { windowtitle = title; }
 
 		void addCell(int x, int y) { board.addCell(Cell(x, y)); }
 		void setBoardSize(int width, int height);

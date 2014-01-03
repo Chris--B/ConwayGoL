@@ -5,7 +5,7 @@
 
 using namespace Conway;
 
-void Board::forEachCell(std::function<void(const Cell&)> func) const {
+void Board::forEachCell(const std::function<void(const Cell&)>& func) const {
 	for(const Cell& cell : cells) {
 		func(cell);
 	}

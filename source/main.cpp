@@ -1,7 +1,5 @@
 #include "game.h"
 
-#include "windows.h"
-
 int main() {
 	Conway::Game game;
 	game.loadSettings("conway.ini");

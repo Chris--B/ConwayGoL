@@ -95,10 +95,9 @@ void Game::loadSettings(const std::string& filename) {
 }
 
 void Game::render() {
-	window.clear();
-
 	auto background = sf::RectangleShape(sf::Vector2f(window.getSize()));
 	background.setFillColor(color_background);
+	window.clear();
 	window.draw(background);
 
 	board.forEachCell( [this](Cell cell){

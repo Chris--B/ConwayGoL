@@ -1,13 +1,10 @@
 #include "game.h"
 
+#include "windows.h"
+
 int main() {
-
 	Conway::Game game;
-
-	game.setResolution(800, 800);
-	game.setBoardSize(50, 50);
-	game.setTitle("Conway's Game of Life");
-	// game.loadSettings("settings.txt");
+	game.loadSettings("conway.ini");
 
 	// Gliders
 	for(int i = 0; i < game.getBoardHeight(); i += 5) {

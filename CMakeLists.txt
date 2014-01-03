@@ -45,6 +45,7 @@ set(srcs
 	source/board.cpp
 	source/cell.cpp
 	source/game.cpp
+	source/gamesettings.cpp
 	source/main.cpp
 )
 
@@ -52,6 +53,7 @@ set(incs
 	include/board.h
 	include/cell.h
 	include/game.h
+	include/gamesettings.h
 	)
 include_directories(include)
 

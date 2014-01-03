@@ -1,6 +1,7 @@
 #pragma once
 
 #include "board.h"
+#include "GameSettings.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -9,13 +10,14 @@
 namespace Conway {
 	class Game {
 	public:
-		Game() : paused(false), generations_per_sec(15), backgroundColor(sf::Color::White), cellColor(sf::Color::Black) {}
+		Game() {}
 
 		bool isRunning() const { return window.isOpen(); }
 
 		int getBoardHeight() const { return board.getHeight(); }
 		int getBoardWidth() const { return board.getWidth(); }
 
+		void loadSettings(const std::string& filename);
 		void start();
 		void stop() { window.close(); }
 		void handleEvents();
@@ -30,7 +32,7 @@ namespace Conway {
 		void drawCell(const Cell& cell);
 
 		bool paused;
-		int generations_per_sec;
+		int speed;
 
 		Board board;
 

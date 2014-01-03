@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include <cstdarg>
+#include <cassert>
 
 using namespace Conway;
 
@@ -52,14 +53,28 @@ void Game::setResolution(unsigned height, unsigned width) {
 	cellsize = sf::Vector2f(1.0f * height / board.getHeight(), 1.0f * width / board.getWidth());
 }
 
+void Game::loadSettings(const std::string& filename) {
+	auto cfg = GameSettings::fromFile(filename);
+	
+	paused = cfg.start_paused;
+	speed = cfg.speed;
+	backgroundColor = cfg.background_color;
+	cellColor = cfg.cell_color;
+
+	setTitle(cfg.window_title);
+	setResolution(cfg.resolution_height, cfg.resolution_width);
+	setBoardSize(cfg.grid_width, cfg.grid_height);
+}
+
 void Game::start() {
 
 	sf::Clock clock;
-	const sf::Time delay = sf::seconds(1.0f / generations_per_sec); 
+	const sf::Time delay = sf::seconds(1.0f / speed); 
 
 	window.create(videomode, windowtitle);
 
 	while (isRunning()) {
+		loadSettings("conway.ini");
 		clock.restart();
 		while (clock.getElapsedTime() < delay) {
 			handleEvents();

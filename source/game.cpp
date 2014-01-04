@@ -11,22 +11,40 @@ using namespace Conway;
 
 void Game::handleEvents() {
 	sf::Event event;
+
 	while (window.pollEvent(event)) {
+		// Toggle the cell on mouse click/down (for dragging)
+		// LMB creates, RMB kills. If both are held do nothing.
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)
+			&& sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+				// do nothing
+		} else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+			auto pos = sf::Mouse::getPosition(window);
+			board.addCell(Cell(pos.x / cell_size.x, pos.y / cell_size.y));
+		} else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+			auto pos = sf::Mouse::getPosition(window);
+			board.killCell(Cell(pos.x / cell_size.x, pos.y / cell_size.y));
+		}
+
+		// General events
 		switch(event.type) {
 		case sf::Event::Closed:
 			stop();
 			break;
+
 		case sf::Event::KeyPressed:
 			switch(event.key.code) {
-				// Q quits
+			// Q quits
 			case sf::Keyboard::Q:
 				stop();
 				break;
+
+			// Space toggles pause
 			case sf::Keyboard::Space:
-				// Space toggles pause
 				paused = !paused;
 				break;
-				// Right arrow key advances one generation at a time when paused
+
+			// Right arrow key advances one generation at a time when paused
 			case sf::Keyboard::Right:
 				if (paused) {
 					board.advanceBoard();
@@ -114,14 +132,12 @@ void Game::render() {
 void Game::start() {
 
 	sf::Clock clock;
-	const sf::Time delay = sf::seconds(1.0f / speed); 
-
 	window.create(video_mode, window_title);
 
 	while (isRunning()) {
 		loadSettings("conway.ini");
 		clock.restart();
-		while (clock.getElapsedTime() < delay) {
+		while (clock.getElapsedTime() < sf::seconds(1.0f / speed)) {
 			handleEvents();
 			render();
 		}

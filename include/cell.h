@@ -10,6 +10,7 @@ struct Cell {
 
 	Cell& operator=(const Cell& cell);
 	bool operator==(const Cell& cell) const;
+	bool operator!=(const Cell& cell) const;
 
 	int x;
 	int y;

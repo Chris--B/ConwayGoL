@@ -12,3 +12,7 @@ bool Cell::operator==(const Cell& cell) const {
 	return x == cell.x && y == cell.y;
 }
 
+bool Cell::operator!=(const Cell& cell) const {
+	return !(*this == cell);
+}
+

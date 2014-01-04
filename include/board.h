@@ -19,8 +19,10 @@ public:
 
 	void setHeight(int height) { this->height = height; }
 	void setWidth(int width) { this->width = width; }
+
 	void addCell(const Cell& cell) { this->cells.insert(cell); }
-	
+	void killCell(const Cell& cell) { this->cells.erase(cell); }
+
 	/* Call func() on each cell in cells, in some order
 		Equivilent to
 			for(const Cell& cell : board.cells) {

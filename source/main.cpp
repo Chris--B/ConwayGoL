@@ -2,7 +2,8 @@
 
 int main(int argc, const char** argv) {
 	Conway::Game game;
-	game.loadSettings(argc > 1 ? argv[1] : "conway.ini");
+	game.setSettingsFile(argc > 1 ? argv[1] : "conway.ini");
+	game.loadSettings();
 
 	// Gliders
 	for(int i = 0; i < game.getBoardHeight(); i += 5) {

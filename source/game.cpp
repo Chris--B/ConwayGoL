@@ -135,7 +135,7 @@ void Game::start() {
 	window.create(video_mode, window_title);
 
 	while (isRunning()) {
-		loadSettings("conway.ini");
+		loadSettings();
 		clock.restart();
 		while (clock.getElapsedTime() < sf::seconds(1.0f / speed)) {
 			handleEvents();

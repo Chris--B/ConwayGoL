@@ -45,6 +45,5 @@ namespace Conway {
 		std::string window_title;
 
 		sf::Vector2f cell_size;
-		sf::VideoMode video_mode;
 	};
 } // namespace Conway

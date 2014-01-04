@@ -28,6 +28,9 @@ void Game::handleEvents() {
 
 		// General events
 		switch(event.type) {
+		case sf::Event::Resized:
+			window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+			break;
 		case sf::Event::Closed:
 			stop();
 			break;
@@ -73,20 +76,22 @@ void Game::loadSettings(const std::string& filename) {
     
 	int width, height;
 
-	height = reader.GetInteger("window", "height", 800);
-	width = reader.GetInteger("window", "width", 800);
-	setResolution(height, width);
+	if (!window.isOpen()) {
+		height = reader.GetInteger("window", "launch height", 600);
+		width = reader.GetInteger("window", "launch width", 800);
+		setResolution(height, width);
+	}
 
-	height = reader.GetInteger("simulation", "height", 25);
-	width = reader.GetInteger("simulation", "width", 25);
-	setBoardSize(height, width);
+	auto length = reader.GetInteger("simulation", "pixels per cell", 10);
+	cell_size = sf::Vector2f(length, length);
+	setBoardSize(window.getSize().y / length, window.getSize().x / length);
 
-	speed = reader.GetInteger("simulation", "speed", 15);
+	speed = reader.GetInteger("simulation", "speed", 5);
 
 	setWindowTitle(reader.Get("window", "title", "Conway's Game of Life"));
 
 	// sf::Color uses 8bit ints, we'll use the extra values for error detection of sorts
-	// This is messier than I'd like, maybe there's a work around somewhere?
+	// This is messier than I'd like, maybe there's an easier way
 	int red, green, blue;
 
 	// Colors default to black
@@ -132,7 +137,7 @@ void Game::render() {
 void Game::start() {
 
 	sf::Clock clock;
-	window.create(video_mode, window_title);
+	loadSettings();
 
 	while (isRunning()) {
 		loadSettings();
@@ -150,10 +155,10 @@ void Game::start() {
 void Game::setBoardSize(int height, int width) {
 	board.setHeight(height);
 	board.setWidth(width);
-	cell_size = sf::Vector2f(1.0f * video_mode.height / height, 1.0f * video_mode.width / width);
+	cell_size = sf::Vector2f(1.0f * window.getSize().y / height, 1.0f * window.getSize().x / width);
 }
 
 void Game::setResolution(unsigned height, unsigned width) {
-	video_mode = sf::VideoMode(height, width);
+	window.create(sf::VideoMode(width, height), window_title);
 	cell_size = sf::Vector2f(1.0f * height / board.getHeight(), 1.0f * width / board.getWidth());
 }

@@ -56,6 +56,7 @@ std::array<Cell, 8> Board::getNeighbors(const Cell& cell) const {
 		Cell(x + 1, y + 1),
 	};
 
+#if 0
 	// Wrap-around
 	for (auto& c : neighbors) {
 		if (c.x < 0) {
@@ -72,5 +73,6 @@ std::array<Cell, 8> Board::getNeighbors(const Cell& cell) const {
 			c.y = c.y % height;
 		}
 	}
+#endif
 	return neighbors;
 }

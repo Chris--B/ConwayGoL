@@ -13,9 +13,6 @@ namespace Conway {
 
 		bool isRunning() const { return window.isOpen(); }
 
-		int getBoardHeight() const { return board.getHeight(); }
-		int getBoardWidth() const { return board.getWidth(); }
-
 		void handleEvents();
 		void loadSettings() { loadSettings(settings_filename); }
 		void loadSettings(const std::string& filename);
@@ -23,10 +20,9 @@ namespace Conway {
 		void start();
 		void stop() { window.close(); }
 
-		void setBoardSize(int height, int width);
 		void setResolution(unsigned height, unsigned width);
 		void setSettingsFile(const std::string& filename) { settings_filename = filename; }
-		void setWindowTitle(const std::string& title) { window_title = title; }
+		void setWindowTitle(const std::string& title);
 
 		void addCell(int x, int y) { board.addCell(Cell(x, y)); }
 
@@ -42,9 +38,8 @@ namespace Conway {
 		sf::RenderWindow window;
 
 		std::string settings_filename;
-		std::string window_title;
+		std::string window_title;      //SFML doesn't provide a getter, so we have to keep track of it manually
 
 		sf::Vector2f cell_size;
-		sf::VideoMode video_mode;
 	};
 } // namespace Conway

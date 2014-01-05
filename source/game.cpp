@@ -9,6 +9,29 @@
 
 using namespace Conway;
 
+static const std::string SETTINGS_FILE_DEFAULT = 
+	";Default settings, feel free to edit."
+	"\n;Delete this file to re-generate"
+	"\n[window]"
+	"\nlaunch height = 600"
+	"\nlaunch width = 800"
+	"\ntitle = Conway's Game of Life"
+	"\n"
+	"\n[background color]"
+	"\nred = 25"
+	"\ngreen = 25"
+	"\nblue = 25"
+	"\n"
+	"\n[cell color]"
+	"\nred = 255"
+	"\ngreen = 0"
+	"\nblue = 255"
+	"\n"
+	"\n[simulation]"
+	"\npixels per cell = 10"
+	"\nspeed = 10"
+	"\n";
+
 void Game::handleEvents() {
 	sf::Event event;
 
@@ -28,12 +51,26 @@ void Game::handleEvents() {
 
 		// General events
 		switch(event.type) {
+		case sf::Event::Resized:
+			window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+			break;
 		case sf::Event::Closed:
 			stop();
 			break;
 
 		case sf::Event::KeyPressed:
 			switch(event.key.code) {
+			// R fills the screen with random cells
+			case sf::Keyboard::R:
+				board = Board();
+				for(int x = 0; x < window.getSize().x / cell_size.x; ++x) {
+					for(int y = 0; y < window.getSize().y / cell_size.y; ++y) {
+						if (rand() & 1) {
+							board.addCell(Cell(x, y));
+						}
+					}
+				}
+				break;
 			// Q quits
 			case sf::Keyboard::Q:
 				stop();
@@ -61,7 +98,7 @@ void Game::loadSettings(const std::string& filename) {
         // The file doesn't exist, we better try to create it.
         std::ofstream inifile(filename);
         if (inifile) {
-            inifile << ";Auto-generated empty file.\n";
+            inifile << SETTINGS_FILE_DEFAULT;
             inifile.close();
         } else {
             // Could not open it. Bad things are about to happen....
@@ -73,20 +110,21 @@ void Game::loadSettings(const std::string& filename) {
     
 	int width, height;
 
-	height = reader.GetInteger("window", "height", 800);
-	width = reader.GetInteger("window", "width", 800);
-	setResolution(height, width);
+	if (!window.isOpen()) {
+		height = reader.GetInteger("window", "launch height", 600);
+		width = reader.GetInteger("window", "launch width", 800);
+		setResolution(height, width);
+	}
 
-	height = reader.GetInteger("simulation", "height", 25);
-	width = reader.GetInteger("simulation", "width", 25);
-	setBoardSize(height, width);
+	auto length = reader.GetInteger("simulation", "pixels per cell", 10);
+	cell_size = sf::Vector2f(length, length);
 
-	speed = reader.GetInteger("simulation", "speed", 15);
+	speed = reader.GetInteger("simulation", "speed", 5);
 
 	setWindowTitle(reader.Get("window", "title", "Conway's Game of Life"));
 
 	// sf::Color uses 8bit ints, we'll use the extra values for error detection of sorts
-	// This is messier than I'd like, maybe there's a work around somewhere?
+	// This is messier than I'd like, maybe there's an easier way
 	int red, green, blue;
 
 	// Colors default to black
@@ -118,13 +156,26 @@ void Game::render() {
 	window.clear();
 	window.draw(background);
 
-	board.forEachCell( [this](Cell cell){
-		auto box = sf::RectangleShape(cell_size);
+	sf::VertexArray cell_verts(sf::Quads, 4 * board.population());
+
+	board.forEachCell( [this, &cell_verts](const Cell& cell){
 		auto pos = sf::Vector2f(cell.x * cell_size.x, cell.y * cell_size.y);
-		box.setPosition(pos);
-		box.setFillColor(color_cell);
-		window.draw(box);
+
+		sf::Vertex vert(sf::Vector2f(), color_cell);
+
+		vert.position = pos;
+		cell_verts.append(vert);
+
+		vert.position = sf::Vector2f(pos.x,               pos.y + cell_size.y);
+		cell_verts.append(vert);
+
+		vert.position = sf::Vector2f(pos.x + cell_size.x, pos.y + cell_size.y);
+		cell_verts.append(vert);
+
+		vert.position = sf::Vector2f(pos.x + cell_size.x, pos.y);
+		cell_verts.append(vert);
 	});
+	window.draw(cell_verts);
 
 	window.display();
 }
@@ -132,7 +183,7 @@ void Game::render() {
 void Game::start() {
 
 	sf::Clock clock;
-	window.create(video_mode, window_title);
+	loadSettings();
 
 	while (isRunning()) {
 		loadSettings();
@@ -147,13 +198,11 @@ void Game::start() {
 	}
 }
 
-void Game::setBoardSize(int height, int width) {
-	board.setHeight(height);
-	board.setWidth(width);
-	cell_size = sf::Vector2f(1.0f * video_mode.height / height, 1.0f * video_mode.width / width);
+void Game::setResolution(unsigned height, unsigned width) {
+	window.create(sf::VideoMode(width, height), window_title);
 }
 
-void Game::setResolution(unsigned height, unsigned width) {
-	video_mode = sf::VideoMode(height, width);
-	cell_size = sf::Vector2f(1.0f * height / board.getHeight(), 1.0f * width / board.getWidth());
+void Game::setWindowTitle(const std::string& title) {
+	window_title = title;
+	window.setTitle(title);
 }

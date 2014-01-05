@@ -55,22 +55,5 @@ std::array<Cell, 8> Board::getNeighbors(const Cell& cell) const {
 		Cell(x + 1, y - 1),
 		Cell(x + 1, y + 1),
 	};
-
-	// Wrap-around
-	for (auto& c : neighbors) {
-		if (c.x < 0) {
-			c.x += width;
-		}
-		if (c.x >= width) {
-			c.x = c.x % width;
-		}
-
-		if (c.y < 0) {
-			c.y += height;
-		}
-		if (c.y >= height) {
-			c.y = c.y % height;
-		}
-	}
 	return neighbors;
 }

@@ -1,12 +1,12 @@
 #include "game.h"
 
-int main(int argc, const char** argv) {
+int main() {
 	Conway::Game game;
-	game.setSettingsFile(argc > 1 ? argv[1] : "conway.ini");
+	game.setSettingsFile("conway.ini");
 	game.loadSettings();
 
 	// Gliders
-	for(int i = 0; i < game.getBoardHeight(); i += 5) {
+	for(int i = 0; i < 100; i += 5) {
 		game.addCell(2, i + 2);
 		game.addCell(2, i + 1);
 		game.addCell(2, i);

@@ -1,8 +1,8 @@
 #include "game.h"
 
-int main(int argc, const char** argv) {
+int main() {
 	Conway::Game game;
-	game.setSettingsFile(argc > 1 ? argv[1] : "conway.ini");
+	game.setSettingsFile("conway.ini");
 	game.loadSettings();
 
 	// Gliders

@@ -6,7 +6,7 @@ int main(int argc, const char** argv) {
 	game.loadSettings();
 
 	// Gliders
-	for(int i = 0; i < game.getBoardHeight(); i += 5) {
+	for(int i = 0; i < 100; i += 5) {
 		game.addCell(2, i + 2);
 		game.addCell(2, i + 1);
 		game.addCell(2, i);

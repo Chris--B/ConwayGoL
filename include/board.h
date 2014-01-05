@@ -8,17 +8,9 @@
 namespace Conway {
 class Board {
 public:
-	Board() : width(0), height(0) {}
-	Board(size_t width, size_t height)
-		: width(width), height(height) {}
+	Board() {}
 
 	bool isAlive(const Cell& cell) const { return cells.find(cell) != cells.end(); }
-
-	int getHeight() const { return height; }
-	int getWidth() const { return width; }
-
-	void setHeight(int height) { this->height = height; }
-	void setWidth(int width) { this->width = width; }
 
 	void addCell(const Cell& cell) { this->cells.insert(cell); }
 	void killCell(const Cell& cell) { this->cells.erase(cell); }
@@ -39,8 +31,6 @@ private:
 
 	std::array<Cell, 8> getNeighbors(const Cell& cell) const;
 
-	int width;
-	int height;
 
 	std::unordered_set<Cell> cells;
 };

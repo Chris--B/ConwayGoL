@@ -37,6 +37,17 @@ void Game::handleEvents() {
 
 		case sf::Event::KeyPressed:
 			switch(event.key.code) {
+			// R fills the screen with random cells
+			case sf::Keyboard::R:
+				board = Board();
+				for(int x = 0; x < window.getSize().x / cell_size.x; ++x) {
+					for(int y = 0; y < window.getSize().y / cell_size.y; ++y) {
+						if (rand() & 1) {
+							board.addCell(Cell(x, y));
+						}
+					}
+				}
+				break;
 			// Q quits
 			case sf::Keyboard::Q:
 				stop();
@@ -84,7 +95,6 @@ void Game::loadSettings(const std::string& filename) {
 
 	auto length = reader.GetInteger("simulation", "pixels per cell", 10);
 	cell_size = sf::Vector2f(length, length);
-	setBoardSize(window.getSize().y / length, window.getSize().x / length);
 
 	speed = reader.GetInteger("simulation", "speed", 5);
 
@@ -152,13 +162,6 @@ void Game::start() {
 	}
 }
 
-void Game::setBoardSize(int height, int width) {
-	board.setHeight(height);
-	board.setWidth(width);
-	cell_size = sf::Vector2f(1.0f * window.getSize().y / height, 1.0f * window.getSize().x / width);
-}
-
 void Game::setResolution(unsigned height, unsigned width) {
 	window.create(sf::VideoMode(width, height), window_title);
-	cell_size = sf::Vector2f(1.0f * height / board.getHeight(), 1.0f * width / board.getWidth());
 }

@@ -9,6 +9,29 @@
 
 using namespace Conway;
 
+static const std::string SETTINGS_FILE_DEFAULT = 
+	";Default settings, feel free to edit."
+	"\n;Delete this file to re-generate"
+	"\n[window]"
+	"\nlaunch height = 600"
+	"\nlaunch width = 800"
+	"\ntitle = Conway's Game of Life"
+	"\n"
+	"\n[background color]"
+	"\nred = 25"
+	"\ngreen = 25"
+	"\nblue = 25"
+	"\n"
+	"\n[cell color]"
+	"\nred = 255"
+	"\ngreen = 0"
+	"\nblue = 255"
+	"\n"
+	"\n[simulation]"
+	"\npixels per cell = 10"
+	"\nspeed = 10"
+	"\n";
+
 void Game::handleEvents() {
 	sf::Event event;
 
@@ -75,7 +98,7 @@ void Game::loadSettings(const std::string& filename) {
         // The file doesn't exist, we better try to create it.
         std::ofstream inifile(filename);
         if (inifile) {
-            inifile << ";Auto-generated empty file.\n";
+            inifile << SETTINGS_FILE_DEFAULT;
             inifile.close();
         } else {
             // Could not open it. Bad things are about to happen....

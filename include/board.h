@@ -11,6 +11,7 @@ public:
 	Board() {}
 
 	bool isAlive(const Cell& cell) const { return cells.find(cell) != cells.end(); }
+	int population() { return cells.size(); }
 
 	void addCell(const Cell& cell) { this->cells.insert(cell); }
 	void killCell(const Cell& cell) { this->cells.erase(cell); }

@@ -133,13 +133,26 @@ void Game::render() {
 	window.clear();
 	window.draw(background);
 
-	board.forEachCell( [this](Cell cell){
-		auto box = sf::RectangleShape(cell_size);
+	sf::VertexArray cell_verts(sf::Quads, 4 * board.population());
+
+	board.forEachCell( [this, &cell_verts](const Cell& cell){
 		auto pos = sf::Vector2f(cell.x * cell_size.x, cell.y * cell_size.y);
-		box.setPosition(pos);
-		box.setFillColor(color_cell);
-		window.draw(box);
+
+		sf::Vertex vert(sf::Vector2f(), color_cell);
+
+		vert.position = pos;
+		cell_verts.append(vert);
+
+		vert.position = sf::Vector2f(pos.x,               pos.y + cell_size.y);
+		cell_verts.append(vert);
+
+		vert.position = sf::Vector2f(pos.x + cell_size.x, pos.y + cell_size.y);
+		cell_verts.append(vert);
+
+		vert.position = sf::Vector2f(pos.x + cell_size.x, pos.y);
+		cell_verts.append(vert);
 	});
+	window.draw(cell_verts);
 
 	window.display();
 }
@@ -164,4 +177,9 @@ void Game::start() {
 
 void Game::setResolution(unsigned height, unsigned width) {
 	window.create(sf::VideoMode(width, height), window_title);
+}
+
+void Game::setWindowTitle(const std::string& title) {
+	window_title = title;
+	window.setTitle(title);
 }

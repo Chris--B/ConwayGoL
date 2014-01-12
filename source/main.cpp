@@ -2,8 +2,6 @@
 
 int main() {
 	Conway::Game game;
-	game.setSettingsFile("conway.ini");
-	game.loadSettings();
 
 	// Gliders
 	for(int i = 0; i < 100; i += 5) {

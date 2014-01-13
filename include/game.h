@@ -28,7 +28,7 @@ namespace Conway {
 
 		bool isRunning() const { return running; }
 
-		void Game::errorMessage(const std::string& message);
+		void errorMessage(const std::string& message);
 
 		void handleEvents();
 

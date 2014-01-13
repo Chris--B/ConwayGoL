@@ -273,6 +273,7 @@ void Game::errorMessage(const std::string& message) {
 	exit(1);
 }
 #else
+#include <iostream>
 // TODO: use OS X / Linux version of MessageBox, this might not always display
 void Game::errorMessage(const std::string& message) {
 	std::cerr << message << "\n";

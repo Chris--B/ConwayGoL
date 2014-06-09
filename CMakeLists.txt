@@ -14,7 +14,7 @@ if(WIN32)
 	set(SFML_LIBS_RELEASE
 		optimized sfml-main.lib
 		optimized sfml-graphics.lib
-		optimized sfml-window.lib
+		optimized sfml-window.libf
 		optimized sfml-system.lib
 	)
 	set(SFML_LIBS ${SFML_LIBS_DEBUG} ${SFML_LIBS_RELEASE})
@@ -53,6 +53,13 @@ add_executable(
 	include/cell.h
 	include/game.h
 )
+
+set_source_files_properties(
+	INIReader/INIReader.cpp
+	INIReader/ini.c
+
+	PROPERTIES COMPILE_FLAGS /W0
+	)
 
 add_library(
 	INIReader STATIC

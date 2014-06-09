@@ -5,19 +5,17 @@ project(ConwayGoL)
 set(GCC_CLANG_FLAGS "-std=c++11 -Wall -Wextra -Wno-switch -Wno-missing-braces")
 
 if(WIN32)
-	add_definitions(-DSFML_STATIC)
-
 	set(SFML_LIBS_DEBUG
 		debug sfml-main-d.lib
-		debug sfml-graphics-s-d.lib
-		debug sfml-window-s-d.lib
-		debug sfml-system-s-d.lib
+		debug sfml-graphics-d.lib
+		debug sfml-window-d.lib
+		debug sfml-system-d.lib
 	)
 	set(SFML_LIBS_RELEASE
 		optimized sfml-main.lib
-		optimized sfml-graphics-s.lib
-		optimized sfml-window-s.lib
-		optimized sfml-system-s.lib
+		optimized sfml-graphics.lib
+		optimized sfml-window.lib
+		optimized sfml-system.lib
 	)
 	set(SFML_LIBS ${SFML_LIBS_DEBUG} ${SFML_LIBS_RELEASE})
 else()

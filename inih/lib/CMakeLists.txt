@@ -1,6 +1,8 @@
 include_directories(../include)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+if(NOT MSVC)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
+endif()
 
 if (BUILD_SHARED_LIBS)
   add_library(inih SHARED ini.c)

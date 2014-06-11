@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 project(ConwayGoL)
-
-set(GCC_CLANG_FLAGS "-std=c++11 -Wall -Wextra -Wno-switch -Wno-missing-braces")
+add_subdirectory(inih)
 
 if(WIN32)
 	set(SFML_LIBS_DEBUG
@@ -32,15 +31,16 @@ else()
 	set(SFML_LIBS ${SFML_GRAPHICS} ${SFML_SYSTEM} ${SFML_WINDOW})
 endif()
 
-if(MSVC)
-	# Nothing, I just can't find a `not` command
-else()
+if(NOT MSVC)
 	# If you're not using MSVC, you're using Clang or GCC... or Intel. Let's ignore Intel for now.
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_CLANG_FLAGS}")
+	set(
+		CMAKE_CXX_FLAGS
+		"${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra"
+		)
 endif()
 
 include_directories(include)
-include_directories(INIReader)
+include_directories(inih/include)
 
 add_executable(
 	Conway
@@ -54,21 +54,7 @@ add_executable(
 	include/game.h
 )
 
-set_source_files_properties(
-	INIReader/INIReader.cpp
-	INIReader/ini.c
-
-	PROPERTIES COMPILE_FLAGS /W0
-	)
-
-add_library(
-	INIReader STATIC
-	INIReader/INIReader.cpp
-	INIReader/INIReader.h
-	INIReader/ini.c
-	INIReader/ini.h
-)
 target_link_libraries(
 	Conway
-	INIReader
+	inihcpp
 	${SFML_LIBS})

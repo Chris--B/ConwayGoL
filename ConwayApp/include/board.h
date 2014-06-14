@@ -27,12 +27,11 @@ public:
 
 	int advanceBoard(unsigned generations = 1);
 
-private:
 	int countLivingNeighbors(const Cell& cell) const;
 
 	std::array<Cell, 8> getNeighbors(const Cell& cell) const;
 
-
+private:
 	std::unordered_set<Cell> cells;
 };
 

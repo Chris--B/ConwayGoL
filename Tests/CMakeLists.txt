@@ -6,7 +6,6 @@ add_executable(
 
 	BoardTests.cpp
 	CellTests.cpp
-	GameTests.cpp
 
 	${CONWAY_INCLUDES}
 	${CONWAY_SOURCES}

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(ConwayGoL)
 
 if(WIN32)
-	# I've not gotten find_library to work on Windows. Likely a setup issue.
+	# I've not gotten find_library to work on Windows. Possibly a setup issue.
 	set(SFML_LIBS
 
 		debug sfml-main-d.lib
@@ -16,6 +16,15 @@ if(WIN32)
 		optimized sfml-window.lib
 		optimized sfml-system.lib
 	)
+
+	set(GTEST_LIBS
+		debug gtest_maind.lib
+		debug gtestd.lib
+
+		optimized gtest_main.lib
+		optimized gtest.lib
+	)
+
 	add_definitions("/W3")
 else()
 	# TODO: Can XCode make use of more IDE-specific things?
@@ -48,24 +57,33 @@ if(NOT MSVC)
 		)
 endif()
 
+set(CONWAY_INCLUDES
+	${CMAKE_SOURCE_DIR}/ConwayApp/include/board.h
+	${CMAKE_SOURCE_DIR}/ConwayApp/include/cell.h
+	${CMAKE_SOURCE_DIR}/ConwayApp/include/game.h
+)
+set(CONWAY_SOURCES
+	${CMAKE_SOURCE_DIR}/ConwayApp/source/board.cpp
+	${CMAKE_SOURCE_DIR}/ConwayApp/source/cell.cpp
+	${CMAKE_SOURCE_DIR}/ConwayApp/source/game.cpp
+)
+
+include_directories(
+	ConwayApp/include
+	inih/include
+)
+
+add_subdirectory(inih)
+add_subdirectory(Tests)
+
 add_executable(
 	Conway
 	WIN32 MACOSX_BUNDLE
 
-	ConwayApp/source/board.cpp
-	ConwayApp/source/cell.cpp
-	ConwayApp/source/game.cpp
 	ConwayApp/source/main.cpp
-
-	ConwayApp/include/board.h
-	ConwayApp/include/cell.h
-	ConwayApp/include/game.h
+	${CONWAY_INCLUDES}
+	${CONWAY_SOURCES}
 )
-
-include_directories(ConwayApp/include)
-include_directories(inih/include)
-
-add_subdirectory(inih)
 
 target_link_libraries(
 	Conway

@@ -1,5 +1,5 @@
 #include "game.h"
-#include "INIReader.h"
+#include "inireader.h"
 
 #include <cstdio>
 #include <cstdarg>

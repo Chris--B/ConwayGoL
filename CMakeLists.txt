@@ -46,13 +46,13 @@ elseif(GCC OR CLANG)
 	# Older versions of GCC and Clang expect -std=c++0x.
 	# We are not supporting those versions at this time.
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    
-    # When compiling C++11 on OS X, we need to use libc++ instead.
-    # I'm not sure why, but it's what StackOverflow suggets and it works.
-    if(APPLE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-    endif()
+
+	# When compiling C++11 on OS X, we need to use libc++ instead.
+	# I'm not sure why, but it's what StackOverflow suggets and it works.
+	if(APPLE)
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+	endif()
 
 	# When compiling C++11 on OS X, we need to use libc++ instead.
 	# I'm not sure why, but it's what StackOverflow suggets and it works.

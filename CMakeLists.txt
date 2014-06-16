@@ -1,11 +1,25 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project(ConwayGoL)
+project(Conway CXX C)
 
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	set(CLANG "IN_USE")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	set(GCC "IN_USE")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+	set(INTEL "IN_USE")
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+	# MSVC is already auto-set.
+else()
+	message(SEND_ERROR
+		"Your compiler is '${CMAKE_CXX_COMPILER_ID}',"
+		" but I can't do anything with that. Submit a bug report."
+	)
+endif()
+
+# Setup / find SFML libs.
 if(WIN32)
-	# I've not gotten find_library to work on Windows. Possibly a setup issue.
 	set(SFML_LIBS
-
 		debug sfml-main-d.lib
 		debug sfml-graphics-d.lib
 		debug sfml-window-d.lib
@@ -16,77 +30,62 @@ if(WIN32)
 		optimized sfml-window.lib
 		optimized sfml-system.lib
 	)
-
-	set(GTEST_LIBS
-		debug gtest_maind.lib
-		debug gtestd.lib
-
-		optimized gtest_main.lib
-		optimized gtest.lib
-	)
-
-	add_definitions("/W3")
 else()
-	# TODO: Can XCode make use of more IDE-specific things?
+	find_library(SFML_GRAPHICS sfml-graphics)
+	find_library(SFML_SYSTEM sfml-system)
+	find_library(SFML_WINDOW sfml-window)
+	set(SFML_LIBS ${SFML_GRAPHICS} ${SFML_SYSTEM} ${SFML_WINDOW})
+endif()
+
+# There are two major compilers we need to worry about: MSVC and GCC.
+# Clang follows GCC's interface, and Intel MSVC's.
+if(MSVC OR INTEL)
+	# MSVC has C++11 support turned on by default.
+	set(CMAKE_CXX_FLAGS "/W4")
+elseif(GCC OR CLANG)
+	# Older versions of GCC and Clang expect -std=c++0x.
+	# We are not supporting those versions at this time.
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+	# When compiling C++11 on OS X, we need to use libc++ instead.
+	# I'm not sure why, but it's what StackOverflow suggets and it works.
 	if(APPLE)
-		# OS X needs this (why?), but GCC can't handle it.
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-		# Xcode (but not the makefiles) ignores that last line,
-		#     so we need to hardcode it.
-		set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 	endif()
 
-	find_library(
-		SFML_LIBS
-		sfml-graphics
-		sfml-system
-		sfml-window
+	# -Wswitch complains about our event-handling switch statements,
+	#     so we disable it here.
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-switch")
+else()
+	message(SEND_ERROR
+		"I can't figure out your compiler. Submit a bug report. "
+		"Your Compiler ID is '${CMAKE_CXX_COMPILER_ID}'"
 	)
 endif()
 
-if(NOT MSVC)
-	# If you're not using MSVC, you're using Clang or GCC... or Intel.
-	#     Let's ignore Intel for now.
-	# Older compilers don't support -std=c++11, but do support
-	#     -std=c++0x. We don't care about them.
-	# We disable -Wswitch so the compiler doesn't warn about every
-	#     possible enum not being used when polling events.
-	set(
-		CMAKE_CXX_FLAGS
-		"${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wno-switch"
-		)
-endif()
-
-set(CONWAY_INCLUDES
-	${CMAKE_SOURCE_DIR}/ConwayApp/include/board.h
-	${CMAKE_SOURCE_DIR}/ConwayApp/include/cell.h
-	${CMAKE_SOURCE_DIR}/ConwayApp/include/game.h
-)
-set(CONWAY_SOURCES
-	${CMAKE_SOURCE_DIR}/ConwayApp/source/board.cpp
-	${CMAKE_SOURCE_DIR}/ConwayApp/source/cell.cpp
-	${CMAKE_SOURCE_DIR}/ConwayApp/source/game.cpp
-)
-
-include_directories(
-	ConwayApp/include
-	inih/include
-)
-
-add_subdirectory(inih)
-add_subdirectory(Tests)
+include_directories(include)
 
 add_executable(
 	Conway
 	WIN32 MACOSX_BUNDLE
 
-	ConwayApp/source/main.cpp
-	${CONWAY_INCLUDES}
-	${CONWAY_SOURCES}
+	source/main.cpp
+
+	source/board.cpp
+	source/cell.cpp
+	source/game.cpp
+	source/ini.c
+	source/inireader.cpp
+
+	include/board.h
+	include/cell.h
+	include/game.h
+	include/ini.h
+	include/inireader.h
 )
 
 target_link_libraries(
 	Conway
-	inihcpp
 	${SFML_LIBS}
 )

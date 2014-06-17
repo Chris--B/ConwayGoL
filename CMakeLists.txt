@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 project(Conway CXX C)
+enable_testing()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 	set(CLANG "IN_USE")
@@ -103,5 +104,15 @@ add_executable(
 	gtest/gtest_all.cpp
 	gtest/gtest_main.cpp
 
-	gtest/gtest.h
+	gtest/CellTest.cpp
+
+	include/gtest/gtest.h
 )
+# Windows doesn't need to link against a threading library for gtest.
+if(NOT WIN32)
+	target_link_libraries(
+		ConwayTests
+		pthread
+	)
+endif()
+add_test(gtest ConwayTests)

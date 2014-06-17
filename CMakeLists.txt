@@ -96,3 +96,12 @@ target_link_libraries(
 	Conway
 	${SFML_LIBS}
 )
+
+add_executable(
+	ConwayTests
+
+	gtest/gtest_all.cpp
+	gtest/gtest_main.cpp
+
+	gtest/gtest.h
+)

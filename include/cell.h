@@ -23,8 +23,9 @@ namespace std {
 	template<>
 	struct hash<Conway::Cell> {
 		size_t operator()(const Conway::Cell& cell) const {
-			auto hash_op = std::hash<int>();
-			return hash_op(cell.x) ^ hash_op(cell.y);
+			std::hash<int> hash_op;
+			size_t half_size = sizeof(hash_op(cell.x)) * 4;
+			return (hash_op(cell.x) << half_size) ^ hash_op(cell.y);
 		}
 	};
 } // namepsace std

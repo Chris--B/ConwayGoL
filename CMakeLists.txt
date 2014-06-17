@@ -105,6 +105,10 @@ add_executable(
 	gtest/gtest_main.cpp
 
 	gtest/CellTest.cpp
+	source/cell.cpp
+
+	gtest/BoardTest.cpp
+	source/board.cpp
 
 	include/gtest/gtest.h
 )

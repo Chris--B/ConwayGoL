@@ -101,13 +101,13 @@ target_link_libraries(
 add_executable(
 	ConwayTests
 
-	gtest/gtest_all.cpp
-	gtest/gtest_main.cpp
+	test/gtest_all.cpp
+	test/gtest_main.cpp
 
-	gtest/CellTest.cpp
+	test/CellTest.cpp
 	source/cell.cpp
 
-	gtest/BoardTest.cpp
+	test/BoardTest.cpp
 	source/board.cpp
 
 	include/gtest/gtest.h

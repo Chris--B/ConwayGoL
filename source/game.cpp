@@ -140,7 +140,8 @@ void Game::loadSettings(const std::string& filename) {
 		if (red == -1)	{ red = 0; }
 		if (green == -1){ green = 0; }
 		if (blue == -1)	{ blue = 0; }
-		background_color = sf::Color(red, green, blue);
+		background_color = sf::Color(
+			sf::Uint8(red), sf::Uint8(green), sf::Uint8(blue));
 	}
 
 	red = reader.GetInteger("cell color", "red", -1);
@@ -152,7 +153,8 @@ void Game::loadSettings(const std::string& filename) {
 		if (red == -1)	{ red = 0; }
 		if (green == -1){ green = 0; }
 		if (blue == -1)	{ blue = 0; }
-		cell_color = sf::Color(red, green, blue);
+		cell_color = sf::Color(
+			sf::Uint8(red), sf::Uint8(green), sf::Uint8(blue));
 	}
 }
 

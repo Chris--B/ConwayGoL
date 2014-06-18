@@ -42,18 +42,16 @@ endif()
 # Clang follows GCC's interface, and Intel MSVC's.
 if(MSVC OR INTEL)
 	# MSVC has C++11 support turned on by default.
-	set(CMAKE_CXX_FLAGS "/W4")
+	# Various standard headers use C++ exceptions. We don't have a compelling
+	#     reason to disable C++ exceptions, so instead just enable
+	#     unwind semantics and make the compiler happy.
+	# MSVC's security warnings are valuable, but also somewhat of a nuisance.
+	#     We disable them as an easy-fix and avoid using them in our code.
+	set(CMAKE_CXX_FLAGS "/W4 /EHsc /D_CRT_SECURE_NO_WARNINGS")
 elseif(GCC OR CLANG)
 	# Older versions of GCC and Clang expect -std=c++0x.
 	# We are not supporting those versions at this time.
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-	# When compiling C++11 on OS X, we need to use libc++ instead.
-	# I'm not sure why, but it's what StackOverflow suggets and it works.
-	if(APPLE)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-	endif()
 
 	# When compiling C++11 on OS X, we need to use libc++ instead.
 	# I'm not sure why, but it's what StackOverflow suggets and it works.

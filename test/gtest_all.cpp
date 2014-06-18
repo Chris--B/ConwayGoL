@@ -7918,7 +7918,10 @@ const char kCurrentDirectoryString[] = ".\\";
 # endif  // GTEST_OS_WINDOWS_MOBILE
 #else
 const char kPathSeparator = '/';
-const char kPathSeparatorString[] = "/";
+// This is unused and warned about. Uncomment if this being commented
+//     starts to cause problems.
+// Help for future Ctrl+F-ers, -Wunusued-const-variable
+// const char kPathSeparatorString[] = "/";
 const char kCurrentDirectoryString[] = "./";
 #endif  // GTEST_OS_WINDOWS
 

@@ -60,9 +60,11 @@ elseif(GCC OR CLANG)
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 	endif()
 
-	# -Wswitch complains about our event-handling switch statements,
-	#     so we disable it here.
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-switch")
+	# -Wswitch complains about our event-handling switch statementS.
+	# -Wmissing-braces complains about initializing std::array objects.
+	set(DISABLED_WARNINGS "-Wno-switch -Wno-missing-braces")
+
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra ${DISABLED_WARNINGS}")
 else()
 	message(SEND_ERROR
 		"I can't figure out your compiler. Submit a bug report. "

@@ -55,6 +55,8 @@
 #include <ostream>
 #include <vector>
 
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+
 // Copyright 2005, Google Inc.
 // All rights reserved.
 //

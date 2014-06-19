@@ -76,7 +76,7 @@ include_directories(include)
 
 add_executable(
 	Conway
-	WIN32 MACOSX_BUNDLE
+	WIN32
 
 	source/main.cpp
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cell.h"
+#include "Cell.hpp"
 
 #include <array>
 #include <unordered_set>

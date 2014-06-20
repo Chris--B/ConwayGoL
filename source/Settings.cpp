@@ -1,6 +1,6 @@
-#include "Settings.h"
-#include "game.h"
-#include "inireader.h"
+#include "Settings.hpp"
+#include "Game.hpp"
+#include "inireader.hpp"
 
 #include <fstream>
 #include <sstream>

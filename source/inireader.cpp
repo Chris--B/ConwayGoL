@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 #include <ini.h>
-#include <inireader.h>
+#include <inireader.hpp>
 
 using std::string;
 

@@ -1,4 +1,4 @@
-#include "game.h"
+#include "Game.hpp"
 
 int main() {
 	Conway::Game game;

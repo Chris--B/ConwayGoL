@@ -1,7 +1,7 @@
 #pragma once
 
-#include "board.h"
-#include "Settings.h"
+#include "Board.hpp"
+#include "Settings.hpp"
 
 #include <SFML/Graphics.hpp>
 

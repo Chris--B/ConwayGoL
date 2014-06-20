@@ -1,4 +1,4 @@
-#include "board.h"
+#include "Board.hpp"
 
 #include <cstdio>
 #include <cstdarg>

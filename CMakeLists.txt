@@ -80,19 +80,19 @@ add_executable(
 
 	source/main.cpp
 
-	source/board.cpp
-	source/cell.cpp
-	source/game.cpp
+	source/Board.cpp
+	source/Cell.cpp
+	source/Game.cpp
 	source/Settings.cpp
 	source/ini.c
 	source/inireader.cpp
 
-	include/board.h
-	include/cell.h
-	include/game.h
-	include/Settings.h
+	include/Board.hpp
+	include/Cell.hpp
+	include/Game.hpp
+	include/Settings.hpp
 	include/ini.h
-	include/inireader.h
+	include/inireader.hpp
 )
 
 target_link_libraries(
@@ -110,7 +110,7 @@ add_executable(
 	source/cell.cpp
 
 	test/BoardTest.cpp
-	source/board.cpp
+	source/Board.cpp
 
 	include/gtest/gtest.h
 )

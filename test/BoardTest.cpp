@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "board.h"
-#include "cell.h"
+#include "Board.hpp"
+#include "Cell.hpp"
 
 using namespace Conway;
 

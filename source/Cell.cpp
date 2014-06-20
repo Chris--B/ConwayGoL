@@ -1,4 +1,4 @@
-#include "cell.h"
+#include "Cell.hpp"
 
 using namespace Conway;
 

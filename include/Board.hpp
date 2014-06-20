@@ -3,8 +3,8 @@
 #include "Cell.hpp"
 
 #include <array>
-#include <unordered_set>
 #include <functional>
+#include <unordered_set>
 
 namespace Conway {
 class Board {
@@ -16,17 +16,23 @@ public:
 	int countLivingNeighbors(const Cell& cell) const;
 	std::array<Cell, 8> getNeighbors(const Cell& cell) const;
 
+	void randomize(int lowerx, int lowery, int upperx, int uppery);
+
+	void clear() {
+		cells = std::unordered_set<Cell>();
+	}
+
 	// TODO: The render-er needs access to the living cells in order to
 	//           get the vertices to render.
 	//    There's a couple ways to do it:
-	//    1. Copy all the cells and return that. In a Vector?
-	//    2. Return a const& to the internal structure
+	//    1. Copy all the cells and return that.
+	//    2. Return a const& to the internal structure.
 	//    3. Take in a function to operate on the cells, adding
 	//        verticies to a list the function has access to.
 	//    For now, we use #3.
 	void forEachLivingCell(const std::function<void(const Cell&)>& func)
 	 const {
-		for(const Cell& cell : cells) {
+		for (const Cell& cell : cells) {
 			func(cell);
 		}
 	}

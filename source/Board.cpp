@@ -33,18 +33,30 @@ int Board::countLivingNeighbors(const Cell& cell) const {
 }
 
 std::array<Cell, 8> Board::getNeighbors(const Cell& cell) const {
-	auto x = cell.x;
-	auto y = cell.y;
+	int x = cell.x;
+	int y = cell.y;
 
 	std::array<Cell, 8> neighbors = {
 		Cell(x - 1, y),
 		Cell(x - 1, y - 1),
 		Cell(x - 1, y + 1),
-		Cell(x, y - 1),
-		Cell(x, y + 1),
+		Cell(x,     y - 1),
+		Cell(x,     y + 1),
 		Cell(x + 1, y),
 		Cell(x + 1, y - 1),
 		Cell(x + 1, y + 1),
 	};
 	return neighbors;
+}
+
+void Board::randomize(int lowerx, int lowery, int upperx, int uppery) {
+	for(int x = lowerx; x < upperx; ++x) {
+		for(int y = lowery; y < uppery; ++y) {
+			if (rand() & 1) {
+				this->addCell(x, y);
+			} else {
+				this->killCell(x, y);
+			}
+		}
+	}
 }

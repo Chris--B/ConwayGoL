@@ -5,29 +5,20 @@
 
 using namespace Conway;
 
-void Board::forEachCell(const std::function<void(const Cell&)>& func) const {
-	for(const Cell& cell : cells) {
-		func(cell);
-	}
-}
-
-int Board::advanceBoard(unsigned generations) {
+void Board::advanceBoard() {
 	int living_count = 0;
-	while (generations--) {
-		std::unordered_set<Cell> next_gen;
+	std::unordered_set<Cell> next_gen;
 
-		for(auto cell : cells) {
-			for(auto neighbor : getNeighbors(cell)) {
-				auto living_neighbors = countLivingNeighbors(neighbor);
-				if (living_neighbors == 3 || (living_neighbors == 2 && isAlive(neighbor))) {
-					next_gen.insert(neighbor);
-					++living_count;
-				}
+	for(auto cell : cells) {
+		for(auto neighbor : getNeighbors(cell)) {
+			auto living_neighbors = countLivingNeighbors(neighbor);
+			if (living_neighbors == 3 || (living_neighbors == 2 && isAlive(neighbor))) {
+				next_gen.insert(neighbor);
+				++living_count;
 			}
 		}
-		cells = next_gen;
 	}
-	return living_count;
+	cells = next_gen;
 }
 
 int Board::countLivingNeighbors(const Cell& cell) const {

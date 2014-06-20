@@ -1,66 +1,50 @@
 #pragma once
 
 #include "board.h"
+#include "Settings.h"
 
 #include <SFML/Graphics.hpp>
 
 #include <string>
 
 namespace Conway {
-	class Game {
-	public:
-		// [window]
-		static const int LAUNCH_HEIGHT_DEFAULT;
-		static const int LAUNCH_WIDTH_DEFAULT;
-		static const std::string WINDOW_TITLE_DEFAULT;
+class Game {
+public:
+	static void errorMessage(const std::string& message);
 
-		//[background color]
-		static const sf::Color BACKGROUND_COLOR_DEFAULT;
+	Game() {}
 
-		//[cell color]
-		static const sf::Color CELL_COLOR_DEFAULT;
+	void render();
+	void handleEvents();
 
-		//[simulation]
-		static const int PIXELS_PER_CELL_DEFAULT;
-		static const int SPEED_DEFAULT;
+	void setup();
+	void start();
+	void stop();
 
-		Game();
+	void setResolution(unsigned int height, unsigned int width);
+	void setWindowTitle(const std::string& title);
 
-		bool isRunning() const { return running; }
+	void setSettingsFile(const std::string& filename) {
+		settings_filename = filename;
+		settings.fromFile(filename);
+	}
 
-		void errorMessage(const std::string& message);
+	// TODO: Remove this.
+	void addCell(int x, int y) {
+		board.addCell(Cell(x, y));
+	}
 
-		void handleEvents();
+private:
+	Board board;
 
-		void loadSettings(const std::string& filename);
+	bool paused = false;
+	bool running = true;
 
-		void render();
-		void start();
-		void stop();
+	std::string settings_filename = "Conway.ini";
+	Settings settings;
 
-		void saveSettings(const std::string& filename);
-
-		void setResolution(unsigned height, unsigned width);
-		void setSettingsFile(const std::string& filename) { settings_filename = filename; }
-		void setWindowTitle(const std::string& title);
-
-		void addCell(int x, int y) { board.addCell(Cell(x, y)); }
-
-	private:
-		Board board;
-
-		bool paused;
-		bool running;
-		int cell_size;
-		int speed;
-
-		sf::Color background_color;
-		sf::Color cell_color;
-
-		sf::RenderWindow window;
-
-		std::string settings_filename;
-		std::string window_title;      //SFML doesn't provide a getter, so we have to keep track of the title manually.
-
-	};
+	// Graphics exclusive stuff here.
+	// TODO: Hide this away, out of the header?
+	sf::RenderWindow window;
+};
 } // namespace Conway

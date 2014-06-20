@@ -83,12 +83,14 @@ add_executable(
 	source/board.cpp
 	source/cell.cpp
 	source/game.cpp
+	source/Settings.cpp
 	source/ini.c
 	source/inireader.cpp
 
 	include/board.h
 	include/cell.h
 	include/game.h
+	include/Settings.h
 	include/ini.h
 	include/inireader.h
 )

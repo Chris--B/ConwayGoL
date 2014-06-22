@@ -107,7 +107,7 @@ add_executable(
 	test/gtest_main.cpp
 
 	test/CellTest.cpp
-	source/cell.cpp
+	source/Cell.cpp
 
 	test/BoardTest.cpp
 	source/Board.cpp

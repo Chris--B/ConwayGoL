@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 2.8.3)
 project(Conway CXX C)
 enable_testing()
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	set(CLANG "IN_USE")
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 	set(GCC "IN_USE")
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
 	set(INTEL "IN_USE")
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 	# MSVC is already auto-set.
 else()
 	message(SEND_ERROR

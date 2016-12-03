@@ -14,7 +14,7 @@ elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
 else()
 	message(SEND_ERROR
 		"Your compiler is '${CMAKE_CXX_COMPILER_ID}',"
-		" but I can't do anything with that. Submit a bug report."
+		" but I can't do anything with that. Sorry."
 	)
 endif()
 

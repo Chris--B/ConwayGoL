@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
 
 project(Conway CXX C)
-enable_testing()
+OPTION(CONWAY_TESTS "Build tests" OFF)
+
+if(${CONWAY_TEST})
+	enable_testing()
+endif()
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 	set(CLANG "IN_USE")
@@ -16,26 +20,6 @@ else()
 		"Your compiler is '${CMAKE_CXX_COMPILER_ID}',"
 		" but I can't do anything with that. Sorry."
 	)
-endif()
-
-# Setup / find SFML libs.
-if(WIN32)
-	set(SFML_LIBS
-		debug sfml-main-d.lib
-		debug sfml-graphics-d.lib
-		debug sfml-window-d.lib
-		debug sfml-system-d.lib
-
-		optimized sfml-main.lib
-		optimized sfml-graphics.lib
-		optimized sfml-window.lib
-		optimized sfml-system.lib
-	)
-else()
-	find_library(SFML_GRAPHICS sfml-graphics)
-	find_library(SFML_SYSTEM sfml-system)
-	find_library(SFML_WINDOW sfml-window)
-	set(SFML_LIBS ${SFML_GRAPHICS} ${SFML_SYSTEM} ${SFML_WINDOW})
 endif()
 
 # There are two major compilers we need to worry about: MSVC and GCC.
@@ -72,6 +56,11 @@ else()
 	)
 endif()
 
+# SFML
+set(SFML_ROOT "${CMAKE_SOURCE_DIR}/extern/SFML2")
+subdirs(${SFML_ROOT})
+include_directories(${SFML_ROOT}/include)
+
 include_directories(include)
 
 add_executable(
@@ -97,28 +86,38 @@ add_executable(
 
 target_link_libraries(
 	Conway
-	${SFML_LIBS}
+
+	# Will this work off of Windows?
+	sfml-main
+
+	sfml-audio
+	sfml-graphics
+	sfml-network
+	sfml-system
+	sfml-window
 )
 
-add_executable(
-	ConwayTests
-
-	test/gtest_all.cpp
-	test/gtest_main.cpp
-
-	test/CellTest.cpp
-	source/Cell.cpp
-
-	test/BoardTest.cpp
-	source/Board.cpp
-
-	include/gtest/gtest.h
-)
-# Windows doesn't need to link against a threading library for gtest.
-if(NOT WIN32)
-	target_link_libraries(
+if (${CONWAY_TESTS})
+	add_executable(
 		ConwayTests
-		pthread
+
+		test/gtest_all.cpp
+		test/gtest_main.cpp
+
+		test/CellTest.cpp
+		source/Cell.cpp
+
+		test/BoardTest.cpp
+		source/Board.cpp
+
+		include/gtest/gtest.h
 	)
+	# Windows doesn't need to link against a threading library for gtest.
+	if(NOT WIN32)
+		target_link_libraries(
+			ConwayTests
+			pthread
+		)
+	endif()
+	add_test(gtest ConwayTests)
 endif()
-add_test(gtest ConwayTests)

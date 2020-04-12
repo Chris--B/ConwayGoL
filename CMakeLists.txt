@@ -1,81 +1,11 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0)
 
-project(Conway CXX C)
+project(Conway LANGUAGES CXX C)
 enable_testing()
 
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
-	set(CLANG "IN_USE")
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-	set(GCC "IN_USE")
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
-	set(INTEL "IN_USE")
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-	# MSVC is already auto-set.
-else()
-	message(SEND_ERROR
-		"Your compiler is '${CMAKE_CXX_COMPILER_ID}',"
-		" but I can't do anything with that. Submit a bug report."
-	)
-endif()
+find_package(SFML 2.5 COMPONENTS graphics audio window REQUIRED)
 
-# Setup / find SFML libs.
-if(WIN32)
-	set(SFML_LIBS
-		debug sfml-main-d.lib
-		debug sfml-graphics-d.lib
-		debug sfml-window-d.lib
-		debug sfml-system-d.lib
-
-		optimized sfml-main.lib
-		optimized sfml-graphics.lib
-		optimized sfml-window.lib
-		optimized sfml-system.lib
-	)
-else()
-	find_library(SFML_GRAPHICS sfml-graphics)
-	find_library(SFML_SYSTEM sfml-system)
-	find_library(SFML_WINDOW sfml-window)
-	set(SFML_LIBS ${SFML_GRAPHICS} ${SFML_SYSTEM} ${SFML_WINDOW})
-endif()
-
-# There are two major compilers we need to worry about: MSVC and GCC.
-# Clang follows GCC's interface, and Intel MSVC's.
-if(MSVC OR INTEL)
-	# MSVC has C++11 support turned on by default.
-	# Various standard headers use C++ exceptions. We don't have a compelling
-	#     reason to disable C++ exceptions, so instead just enable
-	#     unwind semantics and make the compiler happy.
-	# MSVC's security warnings are valuable, but also somewhat of a nuisance.
-	#     We disable them as an easy-fix and avoid using them in our code.
-	set(CMAKE_CXX_FLAGS "/W4 /EHsc /D_CRT_SECURE_NO_WARNINGS")
-elseif(GCC OR CLANG)
-	# Older versions of GCC and Clang expect -std=c++0x.
-	# We are not supporting those versions at this time.
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-	# When compiling C++11 on OS X, we need to use libc++ instead.
-	# I'm not sure why, but it's what StackOverflow suggets and it works.
-	if(APPLE)
-		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-	endif()
-
-	# -Wswitch complains about our event-handling switch statementS.
-	# -Wmissing-braces complains about initializing std::array objects.
-	set(DISABLED_WARNINGS "-Wno-switch -Wno-missing-braces")
-
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra ${DISABLED_WARNINGS}")
-else()
-	message(SEND_ERROR
-		"I can't figure out your compiler. Submit a bug report. "
-		"Your Compiler ID is '${CMAKE_CXX_COMPILER_ID}'"
-	)
-endif()
-
-include_directories(include)
-
-add_executable(
-	Conway
+add_executable(Conway
 	WIN32
 
 	source/main.cpp
@@ -95,25 +25,40 @@ add_executable(
 	include/inireader.hpp
 )
 
-target_link_libraries(
-	Conway
-	${SFML_LIBS}
+target_include_directories(Conway
+	PRIVATE
+		include
 )
 
-add_executable(
-	ConwayTests
+target_link_libraries(Conway
+	PRIVATE
+		sfml-graphics
+		sfml-system
+		sfml-window
+)
 
+add_executable(ConwayTests
 	test/gtest_all.cpp
 	test/gtest_main.cpp
 
 	test/CellTest.cpp
-	source/Cell.cpp
 
 	test/BoardTest.cpp
-	source/Board.cpp
 
 	include/gtest/gtest.h
+
+	include/Cell.hpp
+	include/Board.hpp
+
+	source/Cell.cpp
+	source/Board.cpp
 )
+
+target_include_directories(ConwayTests
+	PRIVATE
+		include
+)
+
 # Windows doesn't need to link against a threading library for gtest.
 if(NOT WIN32)
 	target_link_libraries(
@@ -122,3 +67,32 @@ if(NOT WIN32)
 	)
 endif()
 add_test(gtest ConwayTests)
+
+function(apply_common_settings target)
+	set_target_properties(${target}
+		PROPERTIES
+			CXX_STANDARD          14
+			CXX_STANDARD_REQUIRED YES
+			CXX_EXTENSIONS        NO
+	)
+
+	if(${CMAKE_CXX_COMPILER_ID} MATCHES "MSVC|INTEL")
+		target_compile_definitions(${target}
+			PRIVATE
+				_CRT_SECURE_NO_WARNINGS
+		)
+	else()
+		target_compile_options(${target}
+			PRIVATE
+				-Wall
+				-Wextra
+				# -Wswitch complains about our event-handling switch statementS.
+				-Wno-switch
+				# -Wmissing-braces complains about initializing std::array objects.
+				-Wno-missing-braces
+		)
+	endif()
+endfunction()
+
+apply_common_settings(Conway)
+apply_common_settings(ConwayTests)

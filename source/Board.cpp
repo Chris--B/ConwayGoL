@@ -6,7 +6,6 @@
 using namespace Conway;
 
 void Board::advanceBoard() {
-	int living_count = 0;
 	std::unordered_set<Cell> next_gen;
 
 	for(auto cell : cells) {
@@ -14,7 +13,6 @@ void Board::advanceBoard() {
 			auto living_neighbors = countLivingNeighbors(neighbor);
 			if (living_neighbors == 3 || (living_neighbors == 2 && isAlive(neighbor))) {
 				next_gen.insert(neighbor);
-				++living_count;
 			}
 		}
 	}

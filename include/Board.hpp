@@ -42,7 +42,7 @@ public:
 	}
 
 	int population() const {
-		return cells.size();
+		return (int)cells.size();
 	}
 
 	void addCell(int x, int y) {

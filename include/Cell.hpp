@@ -7,6 +7,7 @@ namespace Conway {
 // Glorified 2d vector
 struct Cell {
 	Cell() : x(0), y(0) {}
+    Cell(const Cell&) = default;
 	Cell(int x, int y) : x(x), y(y) {}
 
 	Cell& operator=(const Cell& cell);

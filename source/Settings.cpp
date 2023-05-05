@@ -30,13 +30,13 @@ void Settings::fromFile(const std::string& filename) {
 		Game::errorMessage(ss.str());
 	}
 
-	height = reader.GetInteger("window", "launch height", HEIGHT_DEFAULT);
-	width = reader.GetInteger("window", "launch width", WIDTH_DEFAULT);
+	height = (int)reader.GetInteger("window", "launch height", HEIGHT_DEFAULT);
+	width = (int)reader.GetInteger("window", "launch width", WIDTH_DEFAULT);
 
-	cell_size = reader.GetInteger("simulation", "pixels per cell",
+	cell_size = (int)reader.GetInteger("simulation", "pixels per cell",
 		PIXELS_PER_CELL_DEFAULT);
 
-	speed = reader.GetInteger("simulation", "speed", SPEED_DEFAULT);
+	speed = (int)reader.GetInteger("simulation", "speed", SPEED_DEFAULT);
 
 	window_title = reader.Get("window", "title", WINDOW_TITLE_DEFAULT);
 
@@ -47,9 +47,9 @@ void Settings::fromFile(const std::string& filename) {
 	// TODO: How should too large of numbers be handled?
 
 	// If a color isn't specificed, assume 0, UNLESS none of them are given, then we want to use the default color
-	red = reader.GetInteger("background color", "red", -1);
-	green = reader.GetInteger("background color", "green", -1);
-	blue = reader.GetInteger("background color", "blue", -1);
+	red = (int)reader.GetInteger("background color", "red", -1);
+	green = (int)reader.GetInteger("background color", "green", -1);
+	blue = (int)reader.GetInteger("background color", "blue", -1);
 	if (red == -1 && green == -1 && blue == -1) {
 		background_color = BACKGROUND_COLOR_DEFAULT;
 	} else {
@@ -60,9 +60,9 @@ void Settings::fromFile(const std::string& filename) {
 			sf::Uint8(red), sf::Uint8(green), sf::Uint8(blue));
 	}
 
-	red = reader.GetInteger("cell color", "red", -1);
-	green = reader.GetInteger("cell color", "green", -1);
-	blue = reader.GetInteger("cell color", "blue", -1);
+	red = (int)reader.GetInteger("cell color", "red", -1);
+	green = (int)reader.GetInteger("cell color", "green", -1);
+	blue = (int)reader.GetInteger("cell color", "blue", -1);
 	if (red == -1 && green == -1 && blue == -1) {
 		cell_color = CELL_COLOR_DEFAULT;
 	} else {
